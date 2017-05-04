@@ -1,0 +1,15 @@
+#attackerContainer {
+	background: red;
+}
+
+#pendingContainer {
+	background: grey;
+}
+
+#defenderContainer {
+	background: yellow;	
+}
+
+#attackContainer {
+	display: none;
+}
