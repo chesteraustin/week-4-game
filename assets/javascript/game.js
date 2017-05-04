@@ -1,6 +1,71 @@
 $( document ).ready(function() {
 	var attackerPosition;
 	var defenderPosition;
+	var characters =  initCharacters();
+	var remainingEnemies = characters.length - 1;
+	outputStats(characters);
+
+	//SELECT ATTACKER
+	$(".characterContainer").on("click", ".character", function(){
+		var attacker = characters[$(this).attr("data-position")]
+		attacker.selected = true;
+		attackerPosition = [$(this).attr("data-position")];
+		moveCharacters(characters);
+	})
+
+	//SELECT DEFENDER
+	$(".characterContainer").on("click", ".pending", function(){
+		//Clear message
+		$("#gameMessage").text("I am ready!");
+		//reset status of characters to FALSE / pending
+		for (var i = 0; i < characters.length; i++){
+			if (characters[i].selected == "defender") {
+				characters[i].selected = false;
+			}
+		}
+		//put selected character in DEFENSE
+		var defender = characters[$(this).attr("data-position")]
+		defender.selected = "defender";
+		defenderPosition = [$(this).attr("data-position")];
+		moveDefender(characters);
+
+		//once defender has been selected, show attack button
+		$("#attackContainer").show();
+	})
+
+	//Attack Function
+	$("#attack").on("click", function(){
+		if (defenderPosition == null) {
+			//show message to pick defender
+			$("#gameMessage").text("Please pick a defender.")
+		}
+		else {
+			attack(attackerPosition, defenderPosition, characters);
+			outputStats(characters);
+			results = checkCondition(attackerPosition, defenderPosition, characters, remainingEnemies);
+			remainingEnemies = results[0];
+			defenderPosition = results[1];
+
+			if (remainingEnemies == 0) {
+				//Show Message
+				$("#message").text("You Won")
+				$(".modal").modal()
+			}
+		}
+	})
+
+	//Modal was closed, reset game
+	$('.modal').on('hidden.bs.modal', function () {
+		characters = initCharacters();
+		outputStats(characters);
+		$("div[id^='character']").appendTo($("#initialContainer"));
+		$("div[id^='character'] span:first-child").removeClass();
+		$("div[id^='character'] span:first-child").addClass("character");
+		$("#attack").hide();
+	})
+});
+
+function initCharacters(){
 	var characters = [
 		{ characterName: "Character 01",
 			attackPower: 125,
@@ -27,51 +92,8 @@ $( document ).ready(function() {
 			selected: false
 		}
 	]
-	var remainingEnemies = characters.length - 1;
-	console.log(remainingEnemies)
-
-	outputStats(characters);
-
-	//SELECT ATTACKER
-	$(".characterContainer").on("click", ".character", function(){
-		var attacker = characters[$(this).attr("data-position")]
-		attacker.selected = true;
-		attackerPosition = [$(this).attr("data-position")];
-		moveCharacters(characters);
-	})
-
-	//SELECT DEFENDER
-	$(".characterContainer").on("click", ".pending", function(){
-		//reset status of characters to FALSE / pending
-		for (var i = 0; i < characters.length; i++){
-			if (characters[i].selected == "defender") {
-				characters[i].selected = false;
-			}
-		}
-		//put selected character in DEFENSE
-		var defender = characters[$(this).attr("data-position")]
-		defender.selected = "defender";
-		defenderPosition = [$(this).attr("data-position")];
-		moveDefender(characters);
-
-		//once defender has been selected, show attack button
-		$("#attackContainer").show();
-	})
-
-	//Attack Function
-	$("#attack").on("click", function(){
-		attack(attackerPosition, defenderPosition, characters);
-		outputStats(characters);
-		remainingEnemies = checkCondition(attackerPosition, defenderPosition, characters, remainingEnemies);
-		console.log("after function call " + remainingEnemies);
-		if (remainingEnemies == 0) {
-			//Show Message
-			$("#message").text("You Won")
-			$(".modal").modal()
-		}
-	})
-});
-
+	return characters
+}
 function moveCharacters(characters){
 	for (var i = 0; i < characters.length; i++){
 		if (characters[i].selected == true) {
@@ -126,7 +148,6 @@ function outputStats(characters) {
 }
 
 function checkCondition(attacker, defender, characters, remainingEnemies) {
-	console.log("checkCondition start ", remainingEnemies)
 	//Check if attacker health is less than 0
 	if (characters[attacker].healthAmount < 0) {
 		//Show Message
@@ -139,8 +160,8 @@ function checkCondition(attacker, defender, characters, remainingEnemies) {
 		characters[defender].selected == "defeated";
 		$("[data-position= '"+ defender +"']").parent().closest('div').appendTo($("#pendingContainer"));
 		$("[data-position= '"+ defender +"']").removeClass("defender");	
+		defender = null;
 		remainingEnemies = remainingEnemies - 1;
 	}
-	console.log("checkCondition end ", remainingEnemies)
-	return remainingEnemies
+	return [remainingEnemies, defender]
 }

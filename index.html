@@ -23,21 +23,21 @@
 </head>
 
 <body class="container">
-<h1>I am ready!</h1>
-<div>
-	<div id="char_1_container" class="characterContainer">
+<h1 id="gameMessage">I am ready!</h1>
+<div id="initialContainer">
+	<div id="character_1_container" class="characterContainer">
 		<span id="char_1" class="character" data-position="0">Character 01</span>
 		<div id="char_1_health"></div>
 	</div>
-	<div id="char_2_container" class="characterContainer">
+	<div id="character_2_container" class="characterContainer">
 		<span id="char_2" class="character" data-position="1">Character 02</span>
 		<div id="char_2_health"></div>
 	</div>
-	<div id="char_3_container" class="characterContainer">
+	<div id="character_3_container" class="characterContainer">
 		<span id="char_3" class="character" data-position="2">Character 03</span>
 		<div id="char_3_health"></div>
 	</div>
-	<div id="char_4_container" class="characterContainer">
+	<div id="character_4_container" class="characterContainer">
 		<span id="char_4" class="character" data-position="3">Character 04</span>
 		<div id="char_4_health"></div>
 	</div>
@@ -72,7 +72,7 @@
 		<h1 id="message">{{Message Goes Here}}</h1>
 		</div>
 		<div class="modal-footer">
-		<button type="button" class="btn btn-primary">New Game!</button>
+		<button type="button" class="btn btn-primary" data-dismiss="modal">New Game!</button>
 		</div>
 	</div>
 	</div>
