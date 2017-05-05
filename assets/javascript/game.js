@@ -1,9 +1,18 @@
 $( document ).ready(function() {
 	var attackerPosition;
 	var defenderPosition;
+	var winScore = 0;
+	var loseScore = 0;
+	var multiplier = 2;
 	var characters =  initCharacters();
 	var remainingEnemies = characters.length - 1;
 	outputStats(characters);
+
+	//GAME MODE
+	$(".gameMode").on("click", function(){
+		var multiplier = parseInt($(this).val());
+		console.log(multiplier)
+	})
 
 	//SELECT ATTACKER
 	$(".characterContainer").on("click", ".character", function(){
@@ -28,9 +37,12 @@ $( document ).ready(function() {
 		defender.selected = "defender";
 		defenderPosition = [$(this).attr("data-position")];
 		moveDefender(characters);
-
+		console.log("show attackContainer")
 		//once defender has been selected, show attack button
-		$("#attackContainer").show();
+		console.log($("#attackContainer").is(":hidden"))
+		if ($("#attackContainer").is(":hidden")){
+			$("#attackContainer").toggle();
+		}
 	})
 
 	//Attack Function
@@ -40,14 +52,17 @@ $( document ).ready(function() {
 			$("#gameMessage").text("Please pick a defender.")
 		}
 		else {
-			attack(attackerPosition, defenderPosition, characters);
+			attack(attackerPosition, defenderPosition, characters, multiplier);
 			outputStats(characters);
 			results = checkCondition(attackerPosition, defenderPosition, characters, remainingEnemies);
 			remainingEnemies = results[0];
 			defenderPosition = results[1];
+			loseScore = results[2];
 
 			if (remainingEnemies == 0) {
 				//Show Message
+				winScore++;
+				$("#winScore span").text(winScore);
 				$("#message").text("You Won")
 				$(".modal").modal()
 			}
@@ -59,9 +74,10 @@ $( document ).ready(function() {
 		characters = initCharacters();
 		outputStats(characters);
 		$("div[id^='character']").appendTo($("#initialContainer"));
-		$("div[id^='character'] span:first-child").removeClass();
-		$("div[id^='character'] span:first-child").addClass("character");
-		$("#attack").hide();
+		$("div[id^='character'] div:first-child").removeClass();
+		$("div[id^='character'] div:first-child").addClass("character");
+		$("#attackContainer").toggle();
+		remainingEnemies = characters.length - 1;
 	})
 });
 
@@ -71,24 +87,28 @@ function initCharacters(){
 			attackPower: 125,
 			counterPower: 120,
 			healthAmount: 1300,
+			imgSrc: "https://upload.wikimedia.org/wikipedia/en/a/af/Rey_Star_Wars.png",
 			selected: false
 		},
 		{characterName: "Character 02",
 			attackPower: 2,
 			counterPower: 120,
 			healthAmount: 130,
+			imgSrc: "http://vignette2.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png/revision/latest?cb=20161108040914",
 			selected: false
 		},
 		{characterName: "Character 03",
 			attackPower: 3,
 			counterPower: 120,
 			healthAmount: 130,
+			imgSrc: "http://13thdimension.com/wp-content/uploads/2016/12/princess-leia-1280jpg-189929_1280w.png",
 			selected: false
 		},
 		{characterName: "Character 04",
 			attackPower: 4,
 			counterPower: 5,
 			healthAmount: 130,
+			imgSrc: "http://vignette2.wikia.nocookie.net/starwars/images/d/df/Masterobiwan.jpg/revision/latest/scale-to-width-down/220?cb=20080719000305",
 			selected: false
 		}
 	]
@@ -128,7 +148,7 @@ function moveDefender(characters){
 	}
 }
 
-function attack(attacker, defender, characters) {
+function attack(attacker, defender, characters, multiplier) {
 	//Remove health from defender
 	characters[defender].healthAmount = characters[defender].healthAmount - characters[attacker].attackPower;
 
@@ -136,21 +156,24 @@ function attack(attacker, defender, characters) {
 	characters[attacker].healthAmount = characters[attacker].healthAmount - characters[defender].counterPower;
 
 	//Double Attacker power
-	characters[attacker].attackPower = characters[attacker].attackPower * characters[attacker].attackPower;
+	characters[attacker].attackPower = characters[attacker].attackPower * multiplier;
 }
 
 function outputStats(characters) {
 	for (var i = 0; i < characters.length; i++){
 		var j = i + 1;
 		var health = $("<span>").html(characters[i].healthAmount + " Health Points");
+		var image = $("<span>").html(characters[i].healthAmount + " Health Points");
 		$("#char_" + j + '_health').html(health)
 	}
 }
 
-function checkCondition(attacker, defender, characters, remainingEnemies) {
+function checkCondition(attacker, defender, characters, remainingEnemies, loseScore) {
 	//Check if attacker health is less than 0
 	if (characters[attacker].healthAmount < 0) {
 		//Show Message
+		loseScore++;
+		$("#loseScore span").text(loseScore);
 		$("#message").text("You Lost")
 		$(".modal").modal()
 	}
@@ -160,8 +183,9 @@ function checkCondition(attacker, defender, characters, remainingEnemies) {
 		characters[defender].selected == "defeated";
 		$("[data-position= '"+ defender +"']").parent().closest('div').appendTo($("#pendingContainer"));
 		$("[data-position= '"+ defender +"']").removeClass("defender");	
+		$("[data-position= '"+ defender +"']").addClass("defeated");	
 		defender = null;
 		remainingEnemies = remainingEnemies - 1;
 	}
-	return [remainingEnemies, defender]
+	return [remainingEnemies, defender, loseScore]
 }
