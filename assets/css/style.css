@@ -13,3 +13,17 @@
 #attackContainer {
 	display: none;
 }
+
+.card {
+	width: 20%;
+}
+
+img {
+	max-height: 8rem;
+}
+
+.defeated {
+	filter: grayscale(100%);
+	font-style: oblique;
+	background-color: lightgray;
+}
