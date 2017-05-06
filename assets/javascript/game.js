@@ -92,7 +92,8 @@ $( document ).ready(function() {
 		outputStats(characters);
 		$("div[id^='character']").appendTo($("#initialContainer"));
 		$("div[id^='character'] div:first-child").removeClass();
-		$("div[id^='character'] div:first-child").addClass("character");
+		$("div[id^='character'] div:first-child").addClass("character text-center");
+//		$("div[id^='char_']").addClass("character");
 		$("#gameMessage").text("Choose a character!");
 		$("#turnMessage").html("");
 		$("#attackContainer").toggle();
