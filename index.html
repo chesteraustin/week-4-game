@@ -23,7 +23,9 @@
 </head>
 
 <body class="container">
-<h1 id="gameMessage">I am ready!</h1>
+<h1 id="gameMessage">Choose an character!</h1>
+<h2 id="turnMessage">&nbsp;<br />&nbsp;<br />&nbsp;</h2>
+
 <div class="row">
 	<div id="winScore" class="col-md-3">
 		<h2>Wins: <span>0</span></h2>
@@ -36,72 +38,103 @@
 			<legend>Game Mode</legend>
 			<div class="form-check">
 				<label class="form-check-label">
-					<input type="radio" id="gameMode_01" class="gameMode" value="3">
+					<input type="radio" name="gameMode" id="gameMode_01" class="gameMode" value="3">
 					Easy Mode
 				</label>
 			</div>
 			<div class="form-check">
 				<label class="form-check-label">
-					<input type="radio" id="gameMode_01" class="gameMode" value="2" checked="checked">
+					<input type="radio" name="gameMode" id="gameMode_02" class="gameMode" value="2" checked="checked">
 					Normal Mode
 				</label>
 			</div>
 			<div class="form-check">
 				<label class="form-check-label">
-					<input type="radio" id="gameMode_01" class="gameMode" value="1">
+					<input type="radio" name="gameMode" id="gameMode_03" class="gameMode" value="1">
 					Hard Mode
 				</label>
 			</div>
 			<div class="form-check">
 				<label class="form-check-label">
-					<input type="radio" id="gameMode_01" class="gameMode" value=".5">
+					<input type="radio" name="gameMode" id="gameMode_04" class="gameMode" value=".5">
 					Hardest Mode
+				</label>
+			</div>
+		</fieldset>
+	</div>
+	<div id="gameTheme" class="col-md-3">
+		<fieldset class="form-group">
+			<legend>Game Theme</legend>
+			<div class="form-check">
+				<label class="form-check-label">
+					<input type="radio" name="gameTheme" id="gameTheme_01" class="gameTheme" value="helloKitty">
+					Hello Kitty
+				</label>
+			</div>
+			<div class="form-check">
+				<label class="form-check-label">
+					<input type="radio" name="gameTheme" id="gameTheme_02" class="gameTheme" value="starWars" checked="checked">
+					Star Wars
+				</label>
+			</div>
+			<div class="form-check">
+				<label class="form-check-label">
+					<input type="radio" name="gameTheme" id="gameTheme_03" class="gameTheme" value="bugs">
+					Bugs
 				</label>
 			</div>
 		</fieldset>
 	</div>
 </div>
 <div id="initialContainer" class="row">
-	<div id="character_1_container" class="card characterContainer col-md-3">
-		<div id="char_1" class="character text-center" data-position="0">
-			<img class="card-img-top text-center" src="assets/images/char_01.jpg" alt="Card image cap">
-			<div class="card-block">
-				<h4 class="card-title">Character 01</h4>
-				<p id="char_1_health" class="card-text"></p>
-				<div id="char_1_health"></div>
+	<div class="col-md-3 col-sm-6">
+		<div id="character_1_container" class="card characterContainer">
+			<div id="char_1" class="character text-center" data-position="0">
+				<img class="card-img-top text-center img-responsive" src="assets/images/starWars/char_01.png" alt="Card image cap">
+				<div class="card-block">
+					<h4 class="card-title">Character 01</h4>
+					<p id="char_1_health" class="card-text"></p>
+					<div id="char_1_health"></div>
+				</div>
 			</div>
 		</div>
 	</div>
 
-	<div id="character_2_container" class="card characterContainer col-md-3">
-		<div id="char_2" class="character text-center" data-position="1">
-			<img class="card-img-top text-center" src="assets/images/char_02.gif" alt="Card image cap">
-			<div class="card-block">
-				<h4 class="card-title">Character 02</h4>
-				<p id="char_2_health" class="card-text"></p>
-				<div id="char_2_health"></div>
+	<div class="col-md-3 col-sm-6">
+		<div id="character_2_container" class="card characterContainer">
+			<div id="char_2" class="character text-center" data-position="1">
+				<img class="card-img-top text-center img-responsive" src="assets/images/starWars/char_02.png" alt="Card image cap">
+				<div class="card-block">
+					<h4 class="card-title">Character 02</h4>
+					<p id="char_2_health" class="card-text"></p>
+					<div id="char_2_health"></div>
+				</div>
 			</div>
 		</div>
 	</div>
 
-	<div id="character_3_container" class="card characterContainer col-md-3">
-		<div id="char_3" class="character text-center" data-position="2">
-			<img class="card-img-top text-center" src="assets/images/char_03.gif" alt="Card image cap">
-			<div class="card-block">
-				<h4 class="card-title">Character 03</h4>
-				<p id="char_3_health" class="card-text"></p>
-				<div id="char_3_health"></div>
+	<div class="col-md-3 col-sm-6">
+		<div id="character_3_container" class="card characterContainer">
+			<div id="char_3" class="character text-center img-responsive" data-position="2">
+				<img class="card-img-top text-center" src="assets/images/starWars/char_03.png" alt="Card image cap">
+				<div class="card-block">
+					<h4 class="card-title">Character 03</h4>
+					<p id="char_3_health" class="card-text"></p>
+					<div id="char_3_health"></div>
+				</div>
 			</div>
 		</div>
 	</div>
 
-	<div id="character_4_container" class="card characterContainer col-md-3">
-		<div id="char_4" class="character text-center" data-position="3">
-			<img class="card-img-top text-center" src="assets/images/char_04.jpg" alt="Card image cap">
-			<div class="card-block">
-				<h4 class="card-title">Character 04</h4>
-				<p id="char_4_health" class="card-text"></p>
-				<div id="char_4_health"></div>
+	<div class="col-md-3 col-sm-6">
+		<div id="character_4_container" class="card characterContainer">
+			<div id="char_4" class="character text-center img-responsive" data-position="3">
+				<img class="card-img-top text-center" src="assets/images/starWars/char_04.png" alt="Card image cap">
+				<div class="card-block">
+					<h4 class="card-title">Character 04</h4>
+					<p id="char_4_health" class="card-text"></p>
+					<div id="char_4_health"></div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -112,15 +145,15 @@
 </div>
 
 <div id="attackerContainer" class="container row">
-	<h1>Attacker</h1>
-</div>
-
-<div id="pendingContainer" class="container row">
-	<h1>Pending</h1>
+	<h1 class="col-md-3">Attacker</h1>
 </div>
 
 <div id="defenderContainer" class="container row">
-	<h1>Defender</h1>
+	<h1 class="col-md-3">Defender</h1>
+</div>
+
+<div id="pendingContainer" class="container row">
+	<h1 class="col-md-3">Pending</h1>
 </div>
 
 <div class="modal fade">

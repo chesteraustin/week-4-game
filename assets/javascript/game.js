@@ -3,15 +3,22 @@ $( document ).ready(function() {
 	var defenderPosition;
 	var winScore = 0;
 	var loseScore = 0;
-	var multiplier = 2;
-	var characters =  initCharacters();
+	var multiplier = 1;
+	var gameThemeSelected = 'starWars'
+	var characters =  initCharacters(gameThemeSelected);
 	var remainingEnemies = characters.length - 1;
 	outputStats(characters);
 
 	//GAME MODE
 	$(".gameMode").on("click", function(){
 		var multiplier = parseInt($(this).val());
-		console.log(multiplier)
+	})
+
+	//GAME THEME
+	$(".gameTheme").on("click", function(){
+		var gameTheme = $(this).val();
+		characters = initCharacters(gameTheme);
+		outputStats(characters);
 	})
 
 	//SELECT ATTACKER
@@ -20,12 +27,13 @@ $( document ).ready(function() {
 		attacker.selected = true;
 		attackerPosition = [$(this).attr("data-position")];
 		moveCharacters(characters);
+		$("#gameMessage").text("Choose a defender!");
 	})
 
 	//SELECT DEFENDER
 	$(".characterContainer").on("click", ".pending", function(){
 		//Clear message
-		$("#gameMessage").text("I am ready!");
+		$("#gameMessage").text("Attack!");
 		//reset status of characters to FALSE / pending
 		for (var i = 0; i < characters.length; i++){
 			if (characters[i].selected == "defender") {
@@ -37,7 +45,7 @@ $( document ).ready(function() {
 		defender.selected = "defender";
 		defenderPosition = [$(this).attr("data-position")];
 		moveDefender(characters);
-		console.log("show attackContainer")
+
 		//once defender has been selected, show attack button
 		console.log($("#attackContainer").is(":hidden"))
 		if ($("#attackContainer").is(":hidden")){
@@ -49,11 +57,20 @@ $( document ).ready(function() {
 	$("#attack").on("click", function(){
 		if (defenderPosition == null) {
 			//show message to pick defender
+			$("#turnMessage").text("")
 			$("#gameMessage").text("Please pick a defender.")
 		}
 		else {
 			attack(attackerPosition, defenderPosition, characters, multiplier);
 			outputStats(characters);
+			//Show Message for turn
+			var attackerName = characters[attackerPosition].characterName;
+			var attackerPoint = characters[attackerPosition].attackPower;
+			var defenderName = characters[defenderPosition].characterName;
+			var defenderPoint = characters[defenderPosition].attackPower;
+			$("#turnMessage").html(attackerName + " has <span class='attackMessage'>DAMAGED</span> "+ defenderName + " for " + attackerPoint + " points.  <br />"
+									+ defenderName + " has countered attacked by " + defenderPoint + " points!")
+
 			results = checkCondition(attackerPosition, defenderPosition, characters, remainingEnemies);
 			remainingEnemies = results[0];
 			defenderPosition = results[1];
@@ -71,47 +88,52 @@ $( document ).ready(function() {
 
 	//Modal was closed, reset game
 	$('.modal').on('hidden.bs.modal', function () {
-		characters = initCharacters();
+		characters = initCharacters(gameThemeSelected);
 		outputStats(characters);
 		$("div[id^='character']").appendTo($("#initialContainer"));
 		$("div[id^='character'] div:first-child").removeClass();
 		$("div[id^='character'] div:first-child").addClass("character");
+		$("#gameMessage").text("Choose a character!");
+		$("#turnMessage").html("");
 		$("#attackContainer").toggle();
 		remainingEnemies = characters.length - 1;
 	})
 });
 
-function initCharacters(){
+function initCharacters(gameThemeSelected){
 	var characters = [
 		{ characterName: "Character 01",
-			attackPower: 125,
-			counterPower: 120,
+			attackPower: 10,
+			counterPower: 25,
 			healthAmount: 1300,
-			imgSrc: "https://upload.wikimedia.org/wikipedia/en/a/af/Rey_Star_Wars.png",
+			imgSrc: "assets/images/" + gameThemeSelected + "/char_01.png",
 			selected: false
 		},
 		{characterName: "Character 02",
 			attackPower: 2,
-			counterPower: 120,
+			counterPower: 25,
 			healthAmount: 130,
-			imgSrc: "http://vignette2.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png/revision/latest?cb=20161108040914",
+			imgSrc: "assets/images/" + gameThemeSelected + "/char_02.png",
 			selected: false
 		},
 		{characterName: "Character 03",
 			attackPower: 3,
-			counterPower: 120,
+			counterPower: 25,
 			healthAmount: 130,
-			imgSrc: "http://13thdimension.com/wp-content/uploads/2016/12/princess-leia-1280jpg-189929_1280w.png",
+			imgSrc: "assets/images/" + gameThemeSelected + "/char_03.png",
 			selected: false
 		},
 		{characterName: "Character 04",
 			attackPower: 4,
 			counterPower: 5,
 			healthAmount: 130,
-			imgSrc: "http://vignette2.wikia.nocookie.net/starwars/images/d/df/Masterobiwan.jpg/revision/latest/scale-to-width-down/220?cb=20080719000305",
+			imgSrc: "assets/images/" + gameThemeSelected + "/char_04.png",
 			selected: false
 		}
 	]
+	$("body").removeClass();
+	$("body").addClass("container " + gameThemeSelected);
+
 	return characters
 }
 function moveCharacters(characters){
@@ -119,12 +141,14 @@ function moveCharacters(characters){
 		if (characters[i].selected == true) {
 			var selectedCharacter = characters[i].characterName;
 			$("[data-position= '"+ i+"']").parent().closest('div').appendTo($("#attackerContainer"));
+			$("[data-position= '"+ i+"']").parent().closest('div').addClass("col-md-3 col-sm-6");
 			$("[data-position= '"+ i+"']").removeClass("character");
 			$("[data-position= '"+ i+"']").addClass("attacker");
 		}
 		else {
 			var selectedCharacter = characters[i].characterName;
 			$("[data-position= '"+ i+"']").parent().closest('div').appendTo($("#pendingContainer"));
+			$("[data-position= '"+ i+"']").parent().closest('div').addClass("col-md-3 col-sm-6");
 			$("[data-position= '"+ i+"']").removeClass("character");
 			$("[data-position= '"+ i+"']").addClass("pending");
 		}
@@ -136,12 +160,14 @@ function moveDefender(characters){
 		if (characters[i].selected == "defender") {
 			var selectedCharacter = characters[i].characterName;
 			$("[data-position= '"+ i+"']").parent().closest('div').appendTo($("#defenderContainer"));
+			$("[data-position= '"+ i+"']").parent().closest('div').addClass("col-md-3 col-sm-6");
 			$("[data-position= '"+ i+"']").removeClass("pending");
 			$("[data-position= '"+ i+"']").addClass("defender");
 		}
 		else if (characters[i].selected == false){
 			var selectedCharacter = characters[i].characterName;
 			$("[data-position= '"+ i+"']").parent().closest('div').appendTo($("#pendingContainer"));
+			$("[data-position= '"+ i+"']").parent().closest('div').addClass("col-md-3 col-sm-6");
 			$("[data-position= '"+ i+"']").removeClass("defender");
 			$("[data-position= '"+ i+"']").addClass("pending");
 		}
@@ -156,7 +182,7 @@ function attack(attacker, defender, characters, multiplier) {
 	characters[attacker].healthAmount = characters[attacker].healthAmount - characters[defender].counterPower;
 
 	//Double Attacker power
-	characters[attacker].attackPower = characters[attacker].attackPower * multiplier;
+	characters[attacker].attackPower = (characters[attacker].attackPower * multiplier) + characters[attacker].attackPower;
 }
 
 function outputStats(characters) {
@@ -165,6 +191,7 @@ function outputStats(characters) {
 		var health = $("<span>").html(characters[i].healthAmount + " Health Points");
 		var image = $("<span>").html(characters[i].healthAmount + " Health Points");
 		$("#char_" + j + '_health').html(health)
+		$("#char_" + j  + " img").attr("src", characters[i].imgSrc)
 	}
 }
 
@@ -182,8 +209,11 @@ function checkCondition(attacker, defender, characters, remainingEnemies, loseSc
 		//Move defender to PENDING container
 		characters[defender].selected == "defeated";
 		$("[data-position= '"+ defender +"']").parent().closest('div').appendTo($("#pendingContainer"));
+		$("[data-position= '"+ defender +"']").parent().closest('div').addClass("col-md-3 col-sm-6");
 		$("[data-position= '"+ defender +"']").removeClass("defender");	
 		$("[data-position= '"+ defender +"']").addClass("defeated");	
+		//Message that defender has been defeated
+		$("#turnMessage").append("<br />" + characters[defender].characterName + " has been defeated!  Please select another character!")
 		defender = null;
 		remainingEnemies = remainingEnemies - 1;
 	}
